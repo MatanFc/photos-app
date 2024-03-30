@@ -6,8 +6,6 @@ import PhotoGrid from './PhotoGrid';
 import { clsx } from 'clsx/lite';
 import PhotoLinks from './PhotoLinks';
 import TagHeader from '@/tag/TagHeader';
-import { Camera } from '@/camera';
-import CameraHeader from '@/camera/CameraHeader';
 import { FilmSimulation } from '@/simulation';
 import FilmSimulationHeader from '@/simulation/FilmSimulationHeader';
 
@@ -16,7 +14,6 @@ export default function PhotoDetailPage({
   photos,
   photosGrid,
   tag,
-  camera,
   simulation,
   count,
   dateRange,
@@ -25,7 +22,6 @@ export default function PhotoDetailPage({
   photos: Photo[]
   photosGrid?: Photo[]
   tag?: string
-  camera?: Camera
   simulation?: FilmSimulation
   count?: number
   dateRange?: PhotoDateRange
@@ -41,18 +37,6 @@ export default function PhotoDetailPage({
               tag={tag}
               photos={photos}
               selectedPhoto={photo}
-              dateRange={dateRange}
-            />}
-        />}
-      {camera &&
-        <SiteGrid
-          className="mt-4 mb-8"
-          contentMain={
-            <CameraHeader
-              camera={camera}
-              photos={photos}
-              selectedPhoto={photo}
-              count={count}
               dateRange={dateRange}
             />}
         />}
@@ -78,10 +62,8 @@ export default function PhotoDetailPage({
             primaryTag={tag}
             priority
             prefetchShare
-            showCamera={!camera}
             showSimulation={!simulation}
             shouldShareTag={tag !== undefined}
-            shouldShareCamera={camera !== undefined}
             shouldShareSimulation={simulation !== undefined}
             shouldScrollOnShare={false}
           />,
@@ -112,7 +94,6 @@ export default function PhotoDetailPage({
                 photo,
                 photos,
                 tag,
-                camera,
                 simulation,
               }} />
             </div>,

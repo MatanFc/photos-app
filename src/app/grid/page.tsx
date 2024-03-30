@@ -27,7 +27,6 @@ export default async function GridPage({ searchParams }: PaginationParams) {
     photos,
     photosCount,
     tags,
-    cameras,
     simulations,
   ] = await Promise.all([
     getPhotosCached({ limit }),
@@ -45,7 +44,6 @@ export default async function GridPage({ searchParams }: PaginationParams) {
         contentSide={<div className="sticky top-4 space-y-4 mt-[-4px]">
           <PhotoGridSidebar {...{
             tags,
-            cameras,
             simulations,
             photosCount,
           }} />

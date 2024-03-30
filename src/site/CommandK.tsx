@@ -1,7 +1,6 @@
 import CommandKClient, { CommandKSection } from '@/components/CommandKClient';
 import {
   getPhotosCountCached,
-  getUniqueCamerasCached,
   getUniqueFilmSimulationsCached,
   getUniqueTagsCached,
 } from '@/photo/cache';
@@ -11,12 +10,10 @@ import {
   PATH_ADMIN_TAGS,
   PATH_ADMIN_UPLOADS,
   PATH_SIGN_IN,
-  pathForCamera,
   pathForFilmSimulation,
   pathForPhoto,
   pathForTag,
 } from './paths';
-import { formatCameraText } from '@/camera';
 import { authCached } from '@/auth/cache';
 import { getPhotos } from '@/services/vercel-postgres';
 import { photoQuantityText, titleForPhoto } from '@/photo';
@@ -36,12 +33,10 @@ export default async function CommandK() {
   const [
     count,
     tags,
-    cameras,
     filmSimulations,
   ] = await Promise.all([
     getPhotosCountCached().catch(() => 0),
     getUniqueTagsCached().catch(() => []),
-    getUniqueCamerasCached().catch(() => []),
     getUniqueFilmSimulationsCached().catch(() => []),
   ]);
 
@@ -60,17 +55,6 @@ export default async function CommandK() {
       annotation: formatCount(count),
       annotationAria: formatCountDescriptive(count),
       path: pathForTag(tag),
-    })),
-  };
-
-  const SECTION_CAMERAS: CommandKSection = {
-    heading: 'Cameras',
-    accessory: <IoMdCamera />,
-    items: cameras.map(({ camera, count }) => ({
-      label: formatCameraText(camera),
-      annotation: formatCount(count),
-      annotationAria: formatCountDescriptive(count),
-      path: pathForCamera(camera),
     })),
   };
 
@@ -132,7 +116,6 @@ export default async function CommandK() {
   return <CommandKClient
     sections={[
       SECTION_TAGS,
-      SECTION_CAMERAS,
       SECTION_FILM,
       SECTION_PAGES,
       SECTION_ADMIN,

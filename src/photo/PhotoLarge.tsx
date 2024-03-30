@@ -1,6 +1,5 @@
 import {
   Photo,
-  shouldShowCameraDataForPhoto,
   shouldShowExifDataForPhoto,
   titleForPhoto,
 } from '.';
@@ -11,8 +10,6 @@ import Link from 'next/link';
 import { pathForPhoto, pathForPhotoShare } from '@/site/paths';
 import PhotoTags from '@/tag/PhotoTags';
 import ShareButton from '@/components/ShareButton';
-import PhotoCamera from '../camera/PhotoCamera';
-import { cameraFromPhoto } from '@/camera';
 import PhotoFilmSimulation from '@/simulation/PhotoFilmSimulation';
 import { sortTags } from '@/tag';
 import AdminPhotoMenu from '@/admin/AdminPhotoMenu';
@@ -23,10 +20,8 @@ export default function PhotoLarge({
   primaryTag,
   priority,
   prefetchShare,
-  showCamera = true,
   showSimulation = true,
   shouldShareTag,
-  shouldShareCamera,
   shouldShareSimulation,
   shouldScrollOnShare,
 }: {
@@ -34,18 +29,14 @@ export default function PhotoLarge({
   primaryTag?: string
   priority?: boolean
   prefetchShare?: boolean
-  showCamera?: boolean
   showSimulation?: boolean
   shouldShareTag?: boolean
-  shouldShareCamera?: boolean
   shouldShareSimulation?: boolean
   shouldScrollOnShare?: boolean
 }) {
   const tags = sortTags(photo.tags, primaryTag);
 
-  const camera = cameraFromPhoto(photo);
 
-  const showCameraContent = showCamera && shouldShowCameraDataForPhoto(photo);
   const showTagsContent = tags.length > 0;
   const showExifContent = shouldShowExifDataForPhoto(photo);
 
@@ -92,13 +83,8 @@ export default function PhotoLarge({
                 <div className="uppercase">
                   {photo.caption}
                 </div>}
-              {(showCameraContent || showTagsContent) &&
+              {(showTagsContent) &&
                 <div>
-                  {showCameraContent &&
-                    <PhotoCamera
-                      camera={camera}
-                      contrast="medium"
-                    />}
                   {showTagsContent &&
                     <PhotoTags tags={tags} contrast="medium" />}
                 </div>}
@@ -145,7 +131,6 @@ export default function PhotoLarge({
                 path={pathForPhotoShare(
                   photo,
                   shouldShareTag ? primaryTag : undefined,
-                  shouldShareCamera ? camera : undefined,
                   shouldShareSimulation ? photo.filmSimulation : undefined,
                 )}
                 prefetch={prefetchShare}

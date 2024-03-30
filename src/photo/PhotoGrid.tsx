@@ -2,7 +2,6 @@ import { Photo } from '.';
 import PhotoSmall from './PhotoSmall';
 import { clsx } from 'clsx/lite';
 import AnimateItems from '@/components/AnimateItems';
-import { Camera } from '@/camera';
 import MorePhotos from '@/photo/MorePhotos';
 import { FilmSimulation } from '@/simulation';
 import { GRID_ASPECT_RATIO, HIGH_DENSITY_GRID } from '@/site/config';
@@ -11,7 +10,6 @@ export default function PhotoGrid({
   photos,
   selectedPhoto,
   tag,
-  camera,
   simulation,
   fast,
   animate = true,
@@ -24,7 +22,6 @@ export default function PhotoGrid({
   photos: Photo[]
   selectedPhoto?: Photo
   tag?: string
-  camera?: Camera
   simulation?: FilmSimulation
   fast?: boolean
   animate?: boolean
@@ -67,7 +64,6 @@ export default function PhotoGrid({
             <PhotoSmall {...{
               photo,
               tag,
-              camera,
               simulation,
               selected: photo.id === selectedPhoto?.id,
             }} />

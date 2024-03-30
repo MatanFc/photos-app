@@ -9,13 +9,10 @@ import {
   getPhoto,
   getPhotos,
   getPhotosCount,
-  getPhotosCameraCount,
   getPhotosCountIncludingHidden,
   getPhotosTagCount,
-  getUniqueCameras,
   getUniqueTags,
   getPhotosTagDateRange,
-  getPhotosCameraDateRange,
   getUniqueTagsHidden,
   getUniqueFilmSimulations,
   getPhotosFilmSimulationDateRange,
@@ -24,7 +21,6 @@ import {
   getPhotosNearId,
 } from '@/services/vercel-postgres';
 import { parseCachedPhotoDates, parseCachedPhotosDates } from '@/photo';
-import { createCameraKey } from '@/camera';
 import { PATHS_ADMIN } from '@/site/paths';
 
 // Table key
@@ -32,7 +28,6 @@ const KEY_PHOTOS            = 'photos';
 const KEY_PHOTO             = 'photo';
 // Field keys
 const KEY_TAGS              = 'tags';
-const KEY_CAMERAS           = 'cameras';
 const KEY_FILM_SIMULATIONS  = 'film-simulations';
 // Type keys
 const KEY_COUNT             = 'count';
@@ -45,10 +40,6 @@ const getPhotosCacheKeyForOption = (
 ): string | null => {
   switch (option) {
   // Complex keys
-  case 'camera': {
-    const value = options[option];
-    return value ? `${option}-${createCameraKey(value)}` : null;
-  }
   case 'takenBefore':
   case 'takenAfterInclusive': {
     const value = options[option];
@@ -81,8 +72,6 @@ export const revalidatePhotosKey = () =>
 export const revalidateTagsKey = () =>
   revalidateTag(KEY_TAGS);
 
-export const revalidateCamerasKey = () =>
-  revalidateTag(KEY_CAMERAS);
 
 export const revalidateFilmSimulationsKey = () =>
   revalidateTag(KEY_FILM_SIMULATIONS);
@@ -90,7 +79,6 @@ export const revalidateFilmSimulationsKey = () =>
 export const revalidateAllKeys = () => {
   revalidatePhotosKey();
   revalidateTagsKey();
-  revalidateCamerasKey();
   revalidateFilmSimulationsKey();
 };
 
@@ -143,14 +131,6 @@ export const getPhotosTagCountCached =
     [KEY_PHOTOS, KEY_TAGS],
   );
 
-export const getPhotosCameraCountCached = (
-  ...args: Parameters<typeof getPhotosCameraCount>
-) =>
-  unstable_cache(
-    getPhotosCameraCount,
-    [KEY_PHOTOS, KEY_COUNT, createCameraKey(...args)],
-  )(...args);
-
 export const getPhotosFilmSimulationCountCached =
   unstable_cache(
     getPhotosFilmSimulationCount,
@@ -161,12 +141,6 @@ export const getPhotosTagDateRangeCached =
   unstable_cache(
     getPhotosTagDateRange,
     [KEY_PHOTOS, KEY_TAGS, KEY_DATE_RANGE],
-  );
-
-export const getPhotosCameraDateRangeCached =
-  unstable_cache(
-    getPhotosCameraDateRange,
-    [KEY_PHOTOS, KEY_CAMERAS, KEY_DATE_RANGE],
   );
 
 export const getPhotosFilmSimulationDateRangeCached =
@@ -193,11 +167,6 @@ export const getUniqueTagsHiddenCached =
     [KEY_PHOTOS, KEY_TAGS, KEY_HIDDEN]
   );
 
-export const getUniqueCamerasCached =
-  unstable_cache(
-    getUniqueCameras,
-    [KEY_PHOTOS, KEY_CAMERAS]
-  );
 
 export const getUniqueFilmSimulationsCached =
   unstable_cache(

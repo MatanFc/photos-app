@@ -1,10 +1,5 @@
 import { Photo } from '@/photo';
 import { BASE_URL } from './config';
-import {
-  Camera,
-  createCameraKey,
-  getCameraFromKey,
-} from '@/camera';
 import { FilmSimulation } from '@/simulation';
 
 // Core paths
@@ -97,24 +92,20 @@ const getPhotoId = (photoOrPhotoId: PhotoOrPhotoId) =>
 export const pathForPhoto = (
   photo: PhotoOrPhotoId,
   tag?: string,
-  camera?: Camera,
   simulation?: FilmSimulation,
 ) =>
   tag
     ? `${pathForTag(tag)}/${getPhotoId(photo)}`
-    : camera
-      ? `${pathForCamera(camera)}/${getPhotoId(photo)}`
-      : simulation
+    :  simulation
         ? `${pathForFilmSimulation(simulation)}/${getPhotoId(photo)}`
         : `${PREFIX_PHOTO}/${getPhotoId(photo)}`;
 
 export const pathForPhotoShare = (
   photo: PhotoOrPhotoId,
   tag?: string,
-  camera?: Camera,
   simulation?: FilmSimulation,
 ) =>
-  `${pathForPhoto(photo, tag, camera, simulation)}/${SHARE}`;
+  `${pathForPhoto(photo, tag, simulation)}/${SHARE}`;
 
 export const pathForTag = (tag: string, next?: number) =>
   pathWithNext(
@@ -125,11 +116,8 @@ export const pathForTag = (tag: string, next?: number) =>
 export const pathForTagShare = (tag: string) =>
   `${pathForTag(tag)}/${SHARE}`;
 
-export const pathForCamera = (camera: Camera, next?: number) =>
-  pathWithNext(`${PREFIX_CAMERA}/${createCameraKey(camera)}`, next);
 
-export const pathForCameraShare = (camera: Camera) =>
-  `${pathForCamera(camera)}/${SHARE}`;
+
 
 export const pathForFilmSimulation =
   (simulation: FilmSimulation, next?: number) =>
@@ -144,16 +132,12 @@ export const pathForFilmSimulationShare = (simulation: FilmSimulation) =>
 export const absolutePathForPhoto = (
   photo: PhotoOrPhotoId,
   tag?: string,
-  camera?: Camera,
   simulation?: FilmSimulation
 ) =>
-  `${BASE_URL}${pathForPhoto(photo, tag, camera, simulation)}`;
+  `${BASE_URL}${pathForPhoto(photo, tag, simulation)}`;
 
 export const absolutePathForTag = (tag: string) =>
   `${BASE_URL}${pathForTag(tag)}`;
-
-export const absolutePathForCamera= (camera: Camera) =>
-  `${BASE_URL}${pathForCamera(camera)}`;
 
 export const absolutePathForFilmSimulation = (simulation: FilmSimulation) =>
   `${BASE_URL}${pathForFilmSimulation(simulation)}`;
@@ -163,9 +147,6 @@ export const absolutePathForPhotoImage = (photo: PhotoOrPhotoId) =>
 
 export const absolutePathForTagImage = (tag: string) =>
   `${absolutePathForTag(tag)}/image`;
-
-export const absolutePathForCameraImage= (camera: Camera) =>
-  `${absolutePathForCamera(camera)}/image`;
 
 export const absolutePathForFilmSimulationImage =
   (simulation: FilmSimulation) =>
@@ -249,7 +230,6 @@ export const isPathProtected = (pathname?: string) =>
 export const getPathComponents = (pathname = ''): {
   photoId?: string
   tag?: string
-  camera?: Camera
   simulation?: FilmSimulation
 } => {
   const photoIdFromPhoto = pathname.match(
@@ -267,10 +247,6 @@ export const getPathComponents = (pathname = ''): {
   const simulation = pathname.match(
     new RegExp(`^${PREFIX_FILM_SIMULATION}/([^/]+)`))?.[1] as FilmSimulation;
 
-  const camera = cameraString
-    ? getCameraFromKey(cameraString)
-    : undefined;
-
   return {
     photoId: (
       photoIdFromPhoto ||
@@ -279,26 +255,21 @@ export const getPathComponents = (pathname = ''): {
       photoIdFromFilmSimulation
     ),
     tag,
-    camera,
     simulation,
   };
 };
 
 export const getEscapePath = (pathname?: string) => {
-  const { photoId, tag, camera, simulation } = getPathComponents(pathname);
+  const { photoId, tag, simulation } = getPathComponents(pathname);
   if (
     (photoId && isPathPhoto(pathname)) ||
     (tag && isPathTag(pathname)) ||
-    (camera && isPathCamera(pathname)) ||
     (simulation && isPathFilmSimulation(pathname))
   ) {
     return PATH_GRID;
   } else if (photoId && isPathTagPhotoShare(pathname)) {
     return pathForPhoto(photoId, tag);
   } else if (photoId && isPathCameraPhotoShare(pathname)) {
-    return pathForPhoto(photoId, undefined, camera);
-  } else if (photoId && isPathFilmSimulationPhotoShare(pathname)) {
-    return pathForPhoto(photoId, undefined, undefined, simulation);
   } else if (photoId && isPathPhotoShare(pathname)) {
     return pathForPhoto(photoId);
   } else if (tag && (
@@ -306,11 +277,6 @@ export const getEscapePath = (pathname?: string) => {
     isPathTagShare(pathname)
   )) {
     return pathForTag(tag);
-  } else if (camera && (
-    isPathCameraPhoto(pathname) ||
-    isPathCameraShare(pathname)
-  )) {
-    return pathForCamera(camera);
   } else if (simulation && (
     isPathFilmSimulationPhoto(pathname) ||
     isPathFilmSimulationShare(pathname)

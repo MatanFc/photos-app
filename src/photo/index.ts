@@ -230,10 +230,6 @@ export const dateRangeForPhotos = (
   return { start, end, description };
 };
 
-const photoHasCameraData = (photo: Photo) =>
-  Boolean(photo.make) &&
-  Boolean(photo.model);
-
 const photoHasExifData = (photo: Photo) =>
   Boolean(photo.focalLength) ||
   Boolean(photo.focalLengthIn35MmFormat) ||
@@ -241,9 +237,6 @@ const photoHasExifData = (photo: Photo) =>
   Boolean(photo.isoFormatted) ||
   Boolean(photo.exposureTimeFormatted) ||
   Boolean(photo.exposureCompensationFormatted);
-
-export const shouldShowCameraDataForPhoto = (photo: Photo) =>
-  SHOW_EXIF_DATA && photoHasCameraData(photo);
 
 export const shouldShowExifDataForPhoto = (photo: Photo) =>
   SHOW_EXIF_DATA && photoHasExifData(photo);

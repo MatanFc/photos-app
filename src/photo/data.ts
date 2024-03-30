@@ -1,6 +1,5 @@
 import {
   getPhotosCountCached,
-  getUniqueCamerasCached,
   getUniqueFilmSimulationsCached,
   getUniqueTagsCached,
 } from '@/photo/cache';
@@ -12,6 +11,5 @@ export const getPhotoSidebarDataCached = () => [
   getUniqueTagsCached().then(tags =>
     tags.filter(({ tag }) => tag === TAG_FAVS).concat(
       tags.filter(({ tag }) => tag !== TAG_FAVS))),
-  getUniqueCamerasCached(),
   SHOW_FILM_SIMULATIONS ? getUniqueFilmSimulationsCached() : [],
 ] as const;
